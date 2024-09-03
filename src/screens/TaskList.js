@@ -5,6 +5,7 @@ import "moment/locale/pt-br"; // Importa o idioma português para o moment
 
 import TodayImage from "../../assets/imgs/today.jpg";
 import commonStyles from "../commonStyles";
+import Task from "../components/Task";
 
 const TaskList = () => {
   const today = moment().locale("pt-br").format("DD, [de] MMMM");
@@ -18,9 +19,12 @@ const TaskList = () => {
         </View>
       </ImageBackground>
       <View style={styles.taskList}>
-        <Text style={styles.text}>Tarefa 01</Text>
-        <Text style={styles.text}>Tarefa 02</Text>
-        <Text style={styles.text}>Tarefa 03</Text>
+        <Task
+          desc="Comprar livro"
+          estimateAt={new Date()}
+          doneAt={new Date()}
+        />
+        <Task desc="Ler livro" estimateAt={new Date()} doneAt={null} />
       </View>
     </View>
   );
