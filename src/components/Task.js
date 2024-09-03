@@ -7,7 +7,9 @@ import "moment/locale/pt-br"; // Importa o idioma português para o moment
 import commonStyles from "../commonStyles";
 
 const Task = (props) => {
-  const date = moment(props.estimateAt).locale("pt-br").format("DD, [de] MMMM");
+  const formatedDate = moment(props.doneAt ? props.doneAt : props.estimateAt)
+    .locale("pt-br")
+    .format("DD, [de] MMMM");
 
   function getCheckView(doneAt) {
     if (doneAt !== null) {
@@ -34,7 +36,7 @@ const Task = (props) => {
         >
           {props.desc}
         </Text>
-        <Text style={styles.date}>{date + ""}</Text>
+        <Text style={styles.date}>{formatedDate + ""}</Text>
       </View>
     </View>
   );
