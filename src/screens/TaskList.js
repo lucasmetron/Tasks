@@ -32,6 +32,16 @@ const TaskList = () => {
   const today = moment().locale("pt-br").format("DD, [de] MMMM");
   const [tasks, setTasks] = useState(listTest);
 
+  function toggleTask(value) {
+    const newList = tasks.map((item) => {
+      if (item.id === value.id) {
+        item.doneAt = item.doneAt === null ? new Date() : null;
+      }
+      return item;
+    });
+    setTasks(newList);
+  }
+
   return (
     <View style={styles.container}>
       <ImageBackground style={styles.backgorund} source={TodayImage}>
@@ -44,7 +54,7 @@ const TaskList = () => {
         <FlatList
           style={styles.list}
           data={tasks}
-          renderItem={({ item }) => <Task {...item} />}
+          renderItem={({ item }) => <Task toggleTask={toggleTask} {...item} />}
           key={(i) => i.id}
         />
       </View>

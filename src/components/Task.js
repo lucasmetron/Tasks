@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import moment from "moment";
 import "moment/locale/pt-br"; // Importa o idioma português para o moment
@@ -25,7 +25,15 @@ const Task = (props) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.checkContainer}>{getCheckView(props.doneAt)}</View>
+      <View style={styles.checkContainer}>
+        <TouchableOpacity
+          onPress={() => {
+            props.toggleTask(props);
+          }}
+        >
+          {getCheckView(props.doneAt)}
+        </TouchableOpacity>
+      </View>
 
       <View>
         <Text
