@@ -1,5 +1,11 @@
-import React from "react";
-import { View, Text, StyleSheet, ImageBackground } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  FlatList,
+} from "react-native";
 import moment from "moment";
 import "moment/locale/pt-br"; // Importa o idioma português para o moment
 
@@ -7,8 +13,24 @@ import TodayImage from "../../assets/imgs/today.jpg";
 import commonStyles from "../commonStyles";
 import Task from "../components/Task";
 
+const listTest = [
+  {
+    id: Math.random() * 100,
+    desc: "Comprar curso",
+    estimateAt: new Date(),
+    doneAt: new Date(),
+  },
+  {
+    id: Math.random() * 100,
+    desc: "Assistir o curso",
+    estimateAt: new Date(),
+    doneAt: null,
+  },
+];
+
 const TaskList = () => {
   const today = moment().locale("pt-br").format("DD, [de] MMMM");
+  const [tasks, setTasks] = useState(listTest);
 
   return (
     <View style={styles.container}>
@@ -19,12 +41,12 @@ const TaskList = () => {
         </View>
       </ImageBackground>
       <View style={styles.taskList}>
-        <Task
-          desc="Comprar livro"
-          estimateAt={new Date()}
-          doneAt={new Date()}
+        <FlatList
+          style={styles.list}
+          data={tasks}
+          renderItem={({ item }) => <Task {...item} />}
+          key={(i) => i.id}
         />
-        <Task desc="Ler livro" estimateAt={new Date()} doneAt={null} />
       </View>
     </View>
   );
@@ -57,7 +79,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginBottom: 20,
   },
-
   subTitle: {
     fontFamily: commonStyles.fonts.text,
     fontSize: 20,
@@ -65,4 +86,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginBottom: 30,
   },
+
+  list: {},
 });
