@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, SafeAreaView } from "react-native";
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
+import { StyleSheet } from "react-native";
 import {
   useFonts,
   Inter_400Regular,
@@ -28,16 +29,18 @@ export default function App() {
     return null; // Retorna nulo até que as fontes sejam carregadas
   }
   return (
-    <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
-      <TaskList />
-      <StatusBar style="auto" />
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
+        <TaskList />
+        <StatusBar style="dark" />
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "gray",
+    backgroundColor: "white",
   },
 });

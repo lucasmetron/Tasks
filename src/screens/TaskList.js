@@ -69,6 +69,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
+  teste: {
+    padding: 10,
+  },
   backgorund: {
     flex: 3,
   },
