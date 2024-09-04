@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ImageBackground,
   FlatList,
+  TouchableOpacity,
 } from "react-native";
 import moment from "moment";
 import "moment/locale/pt-br"; // Importa o idioma português para o moment
+import Entypo from "@expo/vector-icons/Entypo";
 
 import TodayImage from "../../assets/imgs/today.jpg";
 import commonStyles from "../commonStyles";
@@ -31,6 +33,13 @@ const listTest = [
 const TaskList = () => {
   const today = moment().locale("pt-br").format("DD, [de] MMMM");
   const [tasks, setTasks] = useState(listTest);
+  const [showDoneTasks, setShowDoneTasks] = useState(false);
+  const [allViseableTasks, setAllViseableTasks] = useState(true);
+
+  function toggleFilter() {
+    setShowDoneTasks((value) => !value);
+    setAllViseableTasks((value) => !value);
+  }
 
   function toggleTask(value) {
     const newList = tasks.map((item) => {
@@ -42,9 +51,31 @@ const TaskList = () => {
     setTasks(newList);
   }
 
+  function filterDataVisaeble() {
+    if (allViseableTasks) {
+      return tasks;
+    } else {
+      const newList = tasks.filter((item) => item.doneAt === null);
+      return newList;
+    }
+  }
+
+  useEffect(() => {
+    filterDataVisaeble();
+  }, [tasks]);
+
   return (
     <View style={styles.container}>
       <ImageBackground style={styles.backgorund} source={TodayImage}>
+        <View style={styles.iconBar}>
+          <TouchableOpacity onPress={toggleFilter}>
+            <Entypo
+              name={showDoneTasks ? "eye-with-line" : "eye"}
+              size={30}
+              color={commonStyles.colors.secundary}
+            />
+          </TouchableOpacity>
+        </View>
         <View style={styles.titleBar}>
           <Text style={styles.title}>Hoje</Text>
           <Text style={styles.subTitle}>{today}</Text>
@@ -52,8 +83,7 @@ const TaskList = () => {
       </ImageBackground>
       <View style={styles.taskList}>
         <FlatList
-          style={styles.list}
-          data={tasks}
+          data={filterDataVisaeble()}
           renderItem={({ item }) => <Task toggleTask={toggleTask} {...item} />}
           key={(i) => i.id}
         />
@@ -67,6 +97,7 @@ export default TaskList;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: "relative",
     backgroundColor: "white",
   },
   teste: {
@@ -99,6 +130,10 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginBottom: 30,
   },
-
-  list: {},
+  iconBar: {
+    width: "100%",
+    paddingTop: 20,
+    alignItems: "flex-end",
+    paddingRight: 20,
+  },
 });
