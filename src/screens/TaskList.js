@@ -14,6 +14,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 import TodayImage from "../../assets/imgs/today.jpg";
 import commonStyles from "../commonStyles";
 import Task from "../components/Task";
+import AddTask from "./AddTask";
 
 const listTest = [
   {
@@ -35,6 +36,7 @@ const TaskList = () => {
   const [tasks, setTasks] = useState(listTest);
   const [showDoneTasks, setShowDoneTasks] = useState(false);
   const [allViseableTasks, setAllViseableTasks] = useState(true);
+  const [isModalAddOpen, setIsModalAddOpen] = useState(false);
 
   function toggleFilter() {
     setShowDoneTasks((value) => !value);
@@ -66,6 +68,13 @@ const TaskList = () => {
 
   return (
     <View style={styles.container}>
+      <AddTask
+        isVisiable={isModalAddOpen}
+        onCancel={() => {
+          setIsModalAddOpen(false);
+        }}
+      />
+
       <ImageBackground style={styles.backgorund} source={TodayImage}>
         <View style={styles.iconBar}>
           <TouchableOpacity onPress={toggleFilter}>
@@ -87,6 +96,15 @@ const TaskList = () => {
           renderItem={({ item }) => <Task toggleTask={toggleTask} {...item} />}
           key={(i) => i.id}
         />
+      </View>
+
+      <View style={styles.addTask}>
+        <TouchableOpacity
+          style={styles.addTaskBtn}
+          onPress={() => setIsModalAddOpen(true)}
+        >
+          <Entypo name="plus" size={30} color={"white"} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -135,5 +153,17 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     alignItems: "flex-end",
     paddingRight: 20,
+  },
+  addTask: {
+    width: "100%",
+    alignItems: "flex-end",
+    paddingRight: 30,
+  },
+
+  addTaskBtn: {
+    width: "auto",
+    borderRadius: 50,
+    padding: 5,
+    backgroundColor: commonStyles.colors.today,
   },
 });
