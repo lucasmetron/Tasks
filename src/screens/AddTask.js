@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   View,
@@ -7,14 +7,70 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
+  Platform,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import moment from "moment";
+
 import commonStyles from "../commonStyles";
 
 // import { Container } from './styles';
 
 const AddTask = ({ isVisiable, onCancel, addTask }) => {
   const [desc, setDesc] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
+  function returnDatePick() {
+    const dateString = moment(date).locale("pt-br").format("DD, [de] MMMM");
+
+    if (Platform.OS === "android") {
+      return (
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              setShowDatePicker(true);
+            }}
+          >
+            <Text style={styles.date}>{dateString}</Text>
+          </TouchableOpacity>
+
+          {showDatePicker && (
+            <DateTimePicker
+              mode="date"
+              value={date}
+              onChange={(_, date) => {
+                setDate(date);
+                setShowDatePicker(false);
+              }}
+            />
+          )}
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.dateIOS}>
+          <Text>Data:</Text>
+          <DateTimePicker
+            mode="date"
+            value={date}
+            onChange={(_, date) => {
+              setDate(date);
+              setShowDatePicker(false);
+            }}
+          />
+        </View>
+      );
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      setDesc("");
+      setDate(new Date());
+      setShowDatePicker(false);
+    };
+  }, []);
   return (
     <Modal
       transparent
@@ -38,11 +94,18 @@ const AddTask = ({ isVisiable, onCancel, addTask }) => {
           keyboardType="default"
         />
 
+        {returnDatePick()}
         <View style={styles.btns}>
           <TouchableOpacity style={styles.btn} onPress={onCancel}>
             <Text>Cancelar</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btn} onPress={() => addTask(desc)}>
+          <TouchableOpacity
+            style={styles.btn}
+            onPress={() => {
+              addTask(desc, date);
+              onCancel();
+            }}
+          >
             <Text>Salvar</Text>
           </TouchableOpacity>
         </View>
@@ -85,10 +148,22 @@ const styles = StyleSheet.create({
   input: {
     fontFamily: commonStyles.fonts.text,
     height: 40,
-    margin: 10,
+    margin: 15,
     backgroundColor: "white",
     borderWidth: 1,
     borderColor: "#e3e3e3",
     borderRadius: 6,
+  },
+  date: {
+    fontFamily: commonStyles.fonts.text,
+    fontSize: 20,
+    marginLeft: 15,
+  },
+  dateIOS: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    marginLeft: 15,
+    gap: 8,
   },
 });

@@ -6,6 +6,7 @@ import {
   ImageBackground,
   FlatList,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import moment from "moment";
 import "moment/locale/pt-br"; // Importa o idioma português para o moment
@@ -62,18 +63,36 @@ const TaskList = () => {
     }
   }
 
+  function addTask(desc, date) {
+    console.warn("dado: ", date, desc);
+    const newArray = tasks;
+    const newTask = {
+      id: Math.random() * 100,
+      desc: desc,
+      estimateAt: new Date(date),
+      doneAt: null,
+    };
+
+    newArray.push(newTask);
+
+    setTasks(newArray);
+  }
+
   useEffect(() => {
     filterDataVisaeble();
   }, [tasks]);
 
   return (
     <View style={styles.container}>
-      <AddTask
-        isVisiable={isModalAddOpen}
-        onCancel={() => {
-          setIsModalAddOpen(false);
-        }}
-      />
+      {isModalAddOpen && (
+        <AddTask
+          isVisiable={isModalAddOpen}
+          onCancel={() => {
+            setIsModalAddOpen(false);
+          }}
+          addTask={addTask}
+        />
+      )}
 
       <ImageBackground style={styles.backgorund} source={TodayImage}>
         <View style={styles.iconBar}>
@@ -164,6 +183,7 @@ const styles = StyleSheet.create({
     width: "auto",
     borderRadius: 50,
     padding: 5,
+    marginBottom: Platform.OS === "android" ? 20 : 0,
     backgroundColor: commonStyles.colors.today,
   },
 });
