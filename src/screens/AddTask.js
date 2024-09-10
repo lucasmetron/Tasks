@@ -103,7 +103,6 @@ const AddTask = ({ isVisiable, onCancel, addTask }) => {
             style={styles.btn}
             onPress={() => {
               addTask(desc, date);
-              onCancel();
             }}
           >
             <Text>Salvar</Text>

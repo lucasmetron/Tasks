@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   Platform,
+  Alert,
 } from "react-native";
 import moment from "moment";
 import "moment/locale/pt-br"; // Importa o idioma português para o moment
@@ -64,18 +65,23 @@ const TaskList = () => {
   }
 
   function addTask(desc, date) {
-    console.warn("dado: ", date, desc);
-    const newArray = tasks;
-    const newTask = {
-      id: Math.random() * 100,
-      desc: desc,
-      estimateAt: new Date(date),
-      doneAt: null,
-    };
+    if (desc !== "") {
+      const newArray = tasks;
+      const newTask = {
+        id: Math.random() * 100,
+        desc: desc,
+        estimateAt: new Date(date),
+        doneAt: null,
+      };
 
-    newArray.push(newTask);
+      newArray.push(newTask);
 
-    setTasks(newArray);
+      setTasks(newArray);
+
+      setIsModalAddOpen(false);
+    } else {
+      Alert.alert("Dados inválidos", "Descrição não informada");
+    }
   }
 
   useEffect(() => {
