@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import moment from "moment";
 import "moment/locale/pt-br"; // Importa o idioma português para o moment
+import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import commonStyles from "../commonStyles";
 
@@ -23,30 +24,59 @@ const Task = (props) => {
     }
   }
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.checkContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            props.toggleTask(props);
-          }}
-        >
-          {getCheckView(props.doneAt)}
-        </TouchableOpacity>
-      </View>
+  function getRightContent() {
+    return (
+      <TouchableOpacity
+        style={styles.right}
+        onPress={() => props.deleteTask(props.id)}
+      >
+        <MaterialIcons name="delete" size={30} color="white" />
+      </TouchableOpacity>
+    );
+  }
 
-      <View>
-        <Text
-          style={{
-            ...styles.desc,
-            textDecorationLine: props.doneAt != null ? "line-through" : "none",
-          }}
-        >
-          {props.desc}
-        </Text>
-        <Text style={styles.date}>{formatedDate + ""}</Text>
+  function getLeftContent() {
+    return (
+      <View style={styles.left} onPress={() => props.deleteTask(props.id)}>
+        <MaterialIcons name="delete" size={20} color="white" />
+        <Text style={styles.excludeText}>Excluir</Text>
       </View>
-    </View>
+    );
+  }
+
+  return (
+    <Swipeable
+      renderRightActions={getRightContent}
+      renderLeftActions={getLeftContent}
+      onSwipeableOpen={(direction) =>
+        direction === "left" && props.deleteTask(props.id)
+      }
+    >
+      <View style={styles.container}>
+        <View style={styles.checkContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              props.toggleTask(props);
+            }}
+          >
+            {getCheckView(props.doneAt)}
+          </TouchableOpacity>
+        </View>
+
+        <View>
+          <Text
+            style={{
+              ...styles.desc,
+              textDecorationLine:
+                props.doneAt != null ? "line-through" : "none",
+            }}
+          >
+            {props.desc}
+          </Text>
+          <Text style={styles.date}>{formatedDate + ""}</Text>
+        </View>
+      </View>
+    </Swipeable>
   );
 };
 
@@ -57,8 +87,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderColor: "#AAA",
     borderBottomWidth: 1,
+    borderRightWidth: 1,
+    borderLeftWidth: 1,
     alignItems: "center",
     paddingVertical: 10,
+    backgroundColor: "white",
   },
 
   checkContainer: {
@@ -95,5 +128,27 @@ const styles = StyleSheet.create({
     fontFamily: commonStyles.fonts.text,
     color: commonStyles.colors.subText,
     fontSize: 12,
+  },
+
+  right: {
+    backgroundColor: "red",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    paddingHorizontal: 20,
+  },
+
+  left: {
+    flex: 1,
+    backgroundColor: "red",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: 10,
+  },
+  excludeText: {
+    fontFamily: commonStyles.fonts.text,
+    fontSize: 20,
+    color: "white",
+    margin: 10,
   },
 });

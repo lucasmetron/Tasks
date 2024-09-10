@@ -84,6 +84,11 @@ const TaskList = () => {
     }
   }
 
+  function deleteTask(idTaskToDelete) {
+    const newList = tasks.filter((item) => item.id !== idTaskToDelete);
+    setTasks(newList);
+  }
+
   useEffect(() => {
     filterDataVisaeble();
   }, [tasks]);
@@ -118,7 +123,9 @@ const TaskList = () => {
       <View style={styles.taskList}>
         <FlatList
           data={filterDataVisaeble()}
-          renderItem={({ item }) => <Task toggleTask={toggleTask} {...item} />}
+          renderItem={({ item }) => (
+            <Task deleteTask={deleteTask} toggleTask={toggleTask} {...item} />
+          )}
           key={(i) => i.id}
         />
       </View>

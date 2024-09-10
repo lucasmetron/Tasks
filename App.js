@@ -7,6 +7,7 @@ import {
   Inter_400Regular,
   Inter_700Bold,
 } from "@expo-google-fonts/inter";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import * as SplashScreen from "expo-splash-screen";
 import TaskList from "./src/screens/TaskList";
@@ -31,8 +32,10 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
-        <TaskList />
-        <StatusBar style="dark" />
+        <GestureHandlerRootView>
+          <TaskList />
+          <StatusBar style="dark" />
+        </GestureHandlerRootView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
