@@ -17,21 +17,9 @@ import TodayImage from "../../assets/imgs/today.jpg";
 import commonStyles from "../commonStyles";
 import Task from "../components/Task";
 import AddTask from "./AddTask";
+import { getList, setList } from "../functions";
 
-const listTest = [
-  {
-    id: Math.random() * 100,
-    desc: "Comprar curso",
-    estimateAt: new Date(),
-    doneAt: new Date(),
-  },
-  {
-    id: Math.random() * 100,
-    desc: "Assistir o curso",
-    estimateAt: new Date(),
-    doneAt: null,
-  },
-];
+const listTest = [];
 
 const TaskList = () => {
   const today = moment().locale("pt-br").format("DD, [de] MMMM");
@@ -45,14 +33,22 @@ const TaskList = () => {
     setAllViseableTasks((value) => !value);
   }
 
-  function toggleTask(value) {
+  async function toggleTask(value) {
     const newList = tasks.map((item) => {
       if (item.id === value.id) {
         item.doneAt = item.doneAt === null ? new Date() : null;
       }
       return item;
     });
-    setTasks(newList);
+
+    const res = await setList(newList);
+
+    if (res.isErro) {
+      Alert.alert("Erro!", "Ocorreu algum erro para salvar os dados");
+      return;
+    } else {
+      setTasks(newList);
+    }
   }
 
   function filterDataVisaeble() {
@@ -64,7 +60,7 @@ const TaskList = () => {
     }
   }
 
-  function addTask(desc, date) {
+  async function addTask(desc, date) {
     if (desc !== "") {
       const newArray = tasks;
       const newTask = {
@@ -76,22 +72,49 @@ const TaskList = () => {
 
       newArray.push(newTask);
 
-      setTasks(newArray);
+      const res = await setList(newArray);
 
-      setIsModalAddOpen(false);
+      if (res.isErro) {
+        Alert.alert("Erro!", "Ocorreu algum erro para salvar os dados");
+        return;
+      } else {
+        setTasks(newArray);
+        setIsModalAddOpen(false);
+      }
     } else {
       Alert.alert("Dados inválidos", "Descrição não informada");
     }
   }
 
-  function deleteTask(idTaskToDelete) {
+  async function deleteTask(idTaskToDelete) {
     const newList = tasks.filter((item) => item.id !== idTaskToDelete);
-    setTasks(newList);
+
+    const res = await setList(newList);
+
+    if (res.isErro) {
+      Alert.alert("Erro!", "Ocorreu algum erro para salvar os dados");
+      return;
+    } else {
+      setTasks(newList);
+    }
   }
 
   useEffect(() => {
     filterDataVisaeble();
   }, [tasks]);
+
+  useEffect(() => {
+    (async () => {
+      const res = await getList();
+
+      if (res.isErro) {
+        Alert.alert("Erro!", "Ocorreu algum erro para buscar os dados");
+        setTasks([]);
+      } else {
+        setTasks(res.taslistTasksks);
+      }
+    })();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -120,15 +143,24 @@ const TaskList = () => {
           <Text style={styles.subTitle}>{today}</Text>
         </View>
       </ImageBackground>
-      <View style={styles.taskList}>
-        <FlatList
-          data={filterDataVisaeble()}
-          renderItem={({ item }) => (
-            <Task deleteTask={deleteTask} toggleTask={toggleTask} {...item} />
-          )}
-          key={(i) => i.id}
-        />
-      </View>
+
+      {tasks.length > 0 && (
+        <View style={styles.taskList}>
+          <FlatList
+            data={filterDataVisaeble()}
+            renderItem={({ item }) => (
+              <Task deleteTask={deleteTask} toggleTask={toggleTask} {...item} />
+            )}
+            key={(i) => i.id}
+          />
+        </View>
+      )}
+
+      {tasks.length === 0 && (
+        <View style={styles.noTasks}>
+          <Text style={styles.noTasksText}>Não há tarefas</Text>
+        </View>
+      )}
 
       <View style={styles.addTask}>
         <TouchableOpacity
@@ -198,5 +230,17 @@ const styles = StyleSheet.create({
     padding: 5,
     marginBottom: Platform.OS === "android" ? 20 : 0,
     backgroundColor: commonStyles.colors.today,
+  },
+
+  noTasks: {
+    flex: 7,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  noTasksText: {
+    fontFamily: commonStyles.fonts.title,
+    fontSize: 20,
+    color: "gray",
   },
 });
